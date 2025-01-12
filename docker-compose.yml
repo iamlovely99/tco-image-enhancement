@@ -1,0 +1,32 @@
+version: '3.5'
+services:
+  image-service:
+    hostname: image-service
+    container_name: image-service
+    command: 'python3 app.py'
+    ports:
+      - '3000:3000'
+    build:
+      context: ./
+      # target: development
+      dockerfile: Dockerfile
+    restart: always
+    # volumes:
+    #   - ./bulk-sku-production/src/:/usr/src/app/src/
+    env_file:
+      - ./.env
+    environment:
+      - UPLOAD_PATH=uploads
+      - OUTPUT_PATH=output
+      - ALLOWED_EXTENSIONS=jpg,jpeg,png
+      - DEBUG=True
+      - HOST=127.0.0.1
+      - PORT=3000
+    # networks:
+    #   - my-local-network
+    # extra_hosts:
+    #   - 'host.docker.internal:host-gateway'
+    # cap_add:
+    #   - NET_ADMIN
+# networks:
+#   my-local-network
