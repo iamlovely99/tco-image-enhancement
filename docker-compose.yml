@@ -11,8 +11,10 @@ services:
       # target: development
       dockerfile: Dockerfile
     restart: always
-    # volumes:
-    #   - ./bulk-sku-production/src/:/usr/src/app/src/
+    volumes:
+      - ./:/usr/src/app/
+    healthcheck: 
+      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
     env_file:
       - ./.env
     environment:
@@ -20,7 +22,7 @@ services:
       - OUTPUT_PATH=output
       - ALLOWED_EXTENSIONS=jpg,jpeg,png
       - DEBUG=True
-      - HOST=127.0.0.1
+      - HOST=0.0.0.0
       - PORT=3000
     # networks:
     #   - my-local-network

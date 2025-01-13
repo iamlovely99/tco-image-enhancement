@@ -21,8 +21,8 @@ RUN cd Face_Detection/ &&\
 RUN cd Face_Enhancement/ &&\
   wget --no-check-certificate https://github.com/microsoft/Bringing-Old-Photos-Back-to-Life/releases/download/v1.0/face_checkpoints.zip &&\
   unzip face_checkpoints.zip &&\
-  cd ../ &&\
-  cd Global/ &&\
+  cd ../
+RUN cd Global/ &&\
   wget --no-check-certificate https://github.com/microsoft/Bringing-Old-Photos-Back-to-Life/releases/download/v1.0/global_checkpoints.zip &&\
   unzip global_checkpoints.zip &&\
   rm -f global_checkpoints.zip &&\
