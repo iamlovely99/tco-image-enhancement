@@ -1,4 +1,13 @@
 __pycache__/
 *.pyc
 *~
-
+.venv
+Face_Detection/shape_predictor_68_face_landmarks.dat
+Face_Enhancement/checkpoints
+Face_Enhancement/models/networks/sync_batchnorm
+Face_Enhancement/models/networks/Synchronized-BatchNorm-PyTorch
+Global/checkpoints
+Global/detection_models/sync_batchnorm
+Global/detection_models/Synchronized-BatchNorm-PyTorch
+SPADE
+load_test.js
