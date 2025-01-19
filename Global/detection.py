@@ -14,8 +14,8 @@ import torch.nn.functional as F
 import torchvision as tv
 from PIL import Image, ImageFile
 
-from detection_models import networks
-from detection_util.util import *
+from .detection_models import networks
+from .detection_util.util import *
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -164,15 +164,33 @@ def main(config):
         gc.collect()
         torch.cuda.empty_cache()
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+def runDetection(options):
+    # parser = argparse.ArgumentParser()
     # parser.add_argument('--checkpoint_name', type=str, default="FT_Epoch_latest.pt", help='Checkpoint Name')
 
-    parser.add_argument("--GPU", type=int, default=0)
-    parser.add_argument("--test_path", type=str, default=".")
-    parser.add_argument("--output_dir", type=str, default=".")
-    parser.add_argument("--input_size", type=str, default="scale_256", help="resize_256|full_size|scale_256")
-    config = parser.parse_args()
+    # parser.add_argument("--GPU", type=int, default=0)
+    # parser.add_argument("--test_path", type=str, default=".")
+    # parser.add_argument("--output_dir", type=str, default=".")
+    # parser.add_argument("--input_size", type=str, default="scale_256", help="resize_256|full_size|scale_256")
+    # config = parser.parse_args()
+
+    config = {
+        "GPU": int(options.GPU) if options.GPU else 0,
+        "test_path": options.test_path if options.test_path else ".",
+        "output_dir": options.output_dir if options.output_dir else ".",
+        "input_size": options.input_size if options.input_size else "scale_256",
+    }
 
     main(config)
+
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser()
+#     # parser.add_argument('--checkpoint_name', type=str, default="FT_Epoch_latest.pt", help='Checkpoint Name')
+
+#     parser.add_argument("--GPU", type=int, default=0)
+#     parser.add_argument("--test_path", type=str, default=".")
+#     parser.add_argument("--output_dir", type=str, default=".")
+#     parser.add_argument("--input_size", type=str, default="scale_256", help="resize_256|full_size|scale_256")
+#     config = parser.parse_args()
+
+#     main(config)

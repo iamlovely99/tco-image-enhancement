@@ -3,7 +3,7 @@
 
 import argparse
 import os
-from util import util
+from ..util import util
 import torch
 
 
@@ -11,6 +11,7 @@ class BaseOptions:
     def __init__(self):
         self.parser = argparse.ArgumentParser()
         self.initialized = False
+        self.config = None
 
     def initialize(self):
         # experiment specifics
@@ -334,6 +335,359 @@ class BaseOptions:
 
 
         self.initialized = True
+
+
+    def initializeOptions(self):
+        # experiment specifics
+        self.config = {
+            "name": "label2city",
+                # #help="name of the experiment. It decides where to store samples and models",
+            
+            "gpu_ids": "0",
+                # #help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
+            
+            
+            "checkpoints_dir": "./checkpoints",
+                # #help="models are saved here"
+            ## note: to add this param when using philly
+            # '--project_dir', type=str, default='./', #help='the project is saved here'  ################### This is necessary for philly
+            
+            "outputs_dir": "./outputs",
+            # #help="models are saved here"
+            ## note: to add this param when using philly  Please end with '/'
+            "model": "pix2pixHD",
+            # #help="which model to use"
+            
+            "norm": "instance",
+            # #help="instance normalization or batch normalization"
+            
+            "use_dropout": False,
+            # action="store_true", #help="use dropout for the generator"
+            
+            "data_type": 32,
+            
+            # choices=[8, 16, 32], #help="Supported data type i.e. 8, 16, 32 bit",
+            
+            "verbose": False,
+            # action="store_true", default=False, #help="toggles verbose"
+
+            # input/output sizes
+            "batchSize": 1,
+            # #help="input batch size"
+            "loadSize": 1024,
+            # #help="scale images to this size"
+            "fineSize": 512,
+            # #help="then crop to this size"
+            "label_nc": 35,
+            # #help="# of input label channels"
+            "input_nc": 3,
+            # #help="# of input image channels"
+            "output_nc": 3,
+            # #help="# of output image channels"
+
+            # for setting inputs
+            "dataroot": "./datasets/cityscapes/",
+            
+            "resize_or_crop": "scale_width",
+            # #help="scaling and cropping of images at load time [resize_and_crop|crop|scale_width|scale_width_and_crop]",
+            
+            
+            "serial_batches": True,
+            # action="store_true",
+            # #help="if true, takes images in order to make batches, otherwise takes them randomly",
+            
+            
+            "no_flip": True,
+            # action="store_true",
+            # #help="if specified, do not flip the images for data argumentation",
+            
+            "nThreads": 2,
+            # #help="# threads for loading data"
+            
+            "max_dataset_size": float("inf"),
+            # #help="Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.",
+            
+
+            # for displays
+            "display_winsize": 512,
+            # #help="display window size"
+            
+            "tf_log": False,
+            # action="store_true",
+            # #help="if specified, use tensorboard logging. Requires tensorflow installed",
+            
+
+            # for generator
+            "netG": "global",
+            # #help="selects model to use for netG"
+            "ngf": 64, ##help="# of gen filters in first conv layer"
+            "k_size":3, #help="# kernel size conv layer"
+            "use_v2": False, #action="store_true", #help="use DCDCv2"
+            "mc":1024, #help="# max channel"
+            "start_r":3, #help="start layer to use resblock"
+            
+            "n_downsample_global":4, #help="number of downsampling layers in netG"
+            
+            
+            "n_blocks_global": 9,
+            #help="number of residual blocks in the global generator network",
+            
+            
+            "n_blocks_local": 3,
+                #help="number of residual blocks in the local enhancer network",
+            
+            
+            "n_local_enhancers":1, #help="number of local enhancers to use"
+            
+            
+            "niter_fix_global": 0,
+                #help="number of epochs that we only train the outmost local enhancer",
+            
+
+            
+            "load_pretrain": "",
+                #help="load the pretrained model from the specified location",
+            
+
+            # for instance-wise features
+            
+            "no_instance": True, #action="store_true", #help="if specified, do *not* add instance map as input"
+            
+            
+            "instance_feat": False,
+            # action="store_true",
+            #help="if specified, add encoded instance features as input",
+            
+            
+            "label_feat": False, #action="store_true", #help="if specified, add encoded label features as input"
+            
+            "feat_num":3, #help="vector length for encoded features"
+            
+            "load_features": False, #action="store_true", #help="if specified, load precomputed feature maps"
+            
+            
+            "n_downsample_E":4, #help="# of downsampling layers in encoder"
+            
+            
+            "nef":16, #help="# of encoder filters in the first conv layer"
+            
+            "n_clusters":10, #help="number of clusters for features"
+
+            # diy
+            "self_gen": False, #action="store_true", #help="self generate"
+            
+            "mapping_n_block":3, #help="number of resblock in mapping"
+            
+            "map_mc":64, #help="max channel of mapping"
+            "kl": 0, #help="KL Loss"
+            
+            "load_pretrainA": "",
+            #help="load the pretrained model from the specified location",
+            
+            
+            "load_pretrainB": "",
+            #help="load the pretrained model from the specified location",
+            
+            "feat_gan": False, #action="store_true"
+            "no_cgan": False, #action="store_true"
+            "map_unet": False, #action="store_true"
+            "map_densenet": False, #action="store_true"
+            "fcn": False, #action="store_true"
+            "is_image": False, #action="store_true", #help="train image recon only pair data"
+            "label_unpair": False, #action="store_true"
+            "mapping_unpair": False, #action="store_true"
+            "unpair_w": 1.0,
+            "pair_num":-1,
+            "Gan_w": 1,
+            "feat_dim": -1,
+            "abalation_vae_len":-1,
+
+            ######################### useless, just to cooperate with docker
+            "gpu": None,
+            "dataDir": None,
+            "modelDir": None,
+            "logDir": None,
+            "data_dir": None,
+
+            "use_skip_model": False, #action="store_true"
+            "use_segmentation_model": False, #action="store_true"
+
+            "spatio_size":64,
+            "test_random_crop": False, #action="store_true"
+            ##########################
+
+            "contain_scratch_L": False, #action="store_true"
+            
+            "mask_dilation":0,
+            ## Don't change the input, only dilation the mask
+
+            
+            "irregular_mask": "", #help="This is the root of the mask"
+            
+            
+            "mapping_net_dilation": 1,
+            #help="This parameter is the dilation size of the translation net",
+            
+
+            
+            "VOC": "VOC_RGB_JPEGImages.bigfile", #help="The root of VOC dataset"
+            
+
+            "non_local": "", #help="which non_local setting"
+            
+            "NL_fusion_method": "add",
+            #help="how to fuse the origin feature and nl feature",
+            
+            
+            "NL_use_mask": False, #action="store_true", #help="If use mask while using Non-local mapping model"
+            
+            
+            "correlation_renormalize": False,
+            # action="store_true",
+            #help="Since after mask out the correlation matrix(which is softmaxed, the sum is not 1 any more, enable this param to re-weight",
+            
+
+            "Smooth_L1": False, #action="store_true", #help="Use L1 Loss in image level"
+
+            
+            "face_restore_setting":1, #help="This is for the aligned face restoration"
+            
+            "face_clean_url": "",
+            "syn_input_url": "",
+            "syn_gt_url": "",
+
+            
+            "test_on_synthetic": False,
+            # action="store_true",
+            #help="If you want to test on the synthetic data, enable this parameter",
+            
+
+            "use_SN": False, #action="store_true", #help="Add SN to every parametric layer"
+
+            
+            "use_two_stage_mapping": False, #action="store_true", #help="choose the model which uses two stage"
+            
+
+            "L1_weight": 10.0,
+            "softmax_temperature": 1.0,
+            
+            "patch_similarity": False,
+            # action="store_true",
+            #help="Enable this denotes using 3*3 patch to calculate similarity",
+            
+            
+            "use_self": False,
+            # action="store_true",
+            #help="Enable this denotes that while constructing the new feature maps, using original feature (diagonal == 1",
+            
+
+            "use_own_dataset": False, #action="store_true"
+
+            
+            "test_hole_two_folders": False,
+            # action="store_true",
+            #help="Enable this parameter means test the restoration with inpainting given twp folders which are mask and old respectively",
+            
+
+            
+            "no_hole": False,
+            # action="store_true",
+                #help="While test the full_model on non_scratch data, do not add random mask into the real old photos",
+            ## Only for testing
+            
+            "random_hole": False,
+            # action="store_true",
+            #help="While training the full model, 50% probability add hole",
+            
+
+            "NL_res": False, #action="store_true", #help="NL+Resdual Block"
+
+            "image_L1": False, #action="store_true", #help="Image level loss: L1"
+            
+            "hole_image_no_mask": False,
+            # action="store_true",
+            #help="while testing, give hole image but not give the mask",
+            
+
+            
+            "down_sample_degradation": False,
+            # action="store_true",
+            #help="down_sample the image only, corresponds to [down_sample_face]",
+            
+
+            
+            "norm_G": "spectralinstance", #help="The norm type of Generator"
+            
+            
+            "init_G": "xavier",
+            #help="normal|xavier|xavier_uniform|kaiming|orthogonal|none",
+            
+
+            "use_new_G": False, #action="store_true"
+            "use_new_D": False, #action="store_true"
+
+            
+            "only_voc": False, #action="store_true", #help="test the trianed celebA face model using VOC face"
+            
+
+            
+            "cosin_similarity": False,
+            # action="store_true",
+            #help="For non-local, using cosin to calculate the similarity",
+            
+
+            
+            "downsample_mode": "nearest",
+            #help="For partial non-local, choose how to downsample the mask",
+            
+
+            "mapping_exp": 0,#help='Default 0: original PNL|1: Multi-Scale Patch Attention'
+            "inference_optimize": False
+            # action='store_true',#help='optimize the memory cost'
+        }
+        self.initialized = True
+
+    def updateConfig(self, options):
+        for key, value in options.items():
+            self.config[key] = value
+        return  argparse.Namespace(**self.config)
+
+    def parseOptions(self, options, save=True):
+        if not self.initialized:
+            self.initializeOptions()
+        self.opt = self.updateConfig(options)
+        self.opt.isTrain = self.isTrain  # train or test
+
+        str_ids = self.opt.gpu_ids.split(",")
+        self.opt.gpu_ids = []
+        for str_id in str_ids:
+            int_id = int(str_id)
+            if int_id >= 0:
+                self.opt.gpu_ids.append(int_id)
+
+        # set gpu ids
+        if len(self.opt.gpu_ids) > 0:
+            # pass
+            torch.cuda.set_device(self.opt.gpu_ids[0])
+
+        args = vars(self.opt)
+
+        # print('------------ Options -------------')
+        # for k, v in sorted(args.items()):
+        #     print('%s: %s' % (str(k), str(v)))
+        # print('-------------- End ----------------')
+
+        # save to the disk
+        expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
+        util.mkdirs(expr_dir)
+        if save and not self.opt.continue_train:
+            file_name = os.path.join(expr_dir, "opt.txt")
+            with open(file_name, "wt") as opt_file:
+                opt_file.write("------------ Options -------------\n")
+                for k, v in sorted(args.items()):
+                    opt_file.write("%s: %s\n" % (str(k), str(v)))
+                opt_file.write("-------------- End ----------------\n")
+        return self.opt
 
     def parse(self, save=True):
         if not self.initialized:

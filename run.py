@@ -7,6 +7,9 @@ import shutil
 import sys
 from subprocess import call
 
+from Global.test import runTest
+from Global.detection import runDetection
+
 def run_cmd(command):
     try:
         call(command, shell=True)
@@ -51,48 +54,59 @@ if __name__ == "__main__":
         os.makedirs(stage_1_output_dir)
 
     if not opts.with_scratch:
-        stage_1_command = (
-            "python test.py --test_mode Full --Quality_restore --test_input "
-            + stage_1_input_dir
-            + " --outputs_dir "
-            + stage_1_output_dir
-            + " --gpu_ids "
-            + gpu1
-        )
-        run_cmd(stage_1_command)
+        options = {"test_mode": "Full", "Quality_restore": True, "test_input": stage_1_input_dir, "outputs_dir": stage_1_output_dir, "gpu_ids": gpu1}
+        print("before command")
+        runTest(options)
+        # stage_1_command = (
+        #     "python test.py --test_mode Full --Quality_restore --test_input "
+        #     + stage_1_input_dir
+        #     + " --outputs_dir "
+        #     + stage_1_output_dir
+        #     + " --gpu_ids "
+        #     + gpu1
+        # )
+        # run_cmd(stage_1_command)
     else:
 
         mask_dir = os.path.join(stage_1_output_dir, "masks")
         new_input = os.path.join(mask_dir, "input")
         new_mask = os.path.join(mask_dir, "mask")
-        stage_1_command_1 = (
-            "python detection.py --test_path "
-            + stage_1_input_dir
-            + " --output_dir "
-            + mask_dir
-            + " --input_size full_size"
-            + " --GPU "
-            + gpu1
-        )
+        
+        # stage_1_command_1 = (
+        #     "python detection.py --test_path "
+        #     + stage_1_input_dir
+        #     + " --output_dir "
+        #     + mask_dir
+        #     + " --input_size full_size"
+        #     + " --GPU "
+        #     + gpu1
+        # )
 
+        # if opts.HR:
+        #     HR_suffix=" --HR"
+        # else:
+        #     HR_suffix=""
+        options = {"test_path": stage_1_input_dir, "input_size": "full_size", "output_dir": mask_dir, "GPU": gpu1}
+        runDetection(options)
+
+        options = {"Scratch_and_Quality_restore": True, "test_input": new_input, "test_mask": new_mask, "outputs_dir": stage_1_output_dir, "gpu_ids": gpu1}
         if opts.HR:
-            HR_suffix=" --HR"
-        else:
-            HR_suffix=""
+            options["HR"] = True
+        runTest(options)
 
-        stage_1_command_2 = (
-            "python test.py --Scratch_and_Quality_restore --test_input "
-            + new_input
-            + " --test_mask "
-            + new_mask
-            + " --outputs_dir "
-            + stage_1_output_dir
-            + " --gpu_ids "
-            + gpu1 + HR_suffix
-        )
+        # stage_1_command_2 = (
+        #     "python test.py --Scratch_and_Quality_restore --test_input "
+        #     + new_input
+        #     + " --test_mask "
+        #     + new_mask
+        #     + " --outputs_dir "
+        #     + stage_1_output_dir
+        #     + " --gpu_ids "
+        #     + gpu1 + HR_suffix
+        # )
 
-        run_cmd(stage_1_command_1)
-        run_cmd(stage_1_command_2)
+        # run_cmd(stage_1_command_1)
+        # run_cmd(stage_1_command_2)
 
     ## Solve the case when there is no face in the old photo
     stage_1_results = os.path.join(stage_1_output_dir, "restored_image")

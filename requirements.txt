@@ -15,3 +15,4 @@ matplotlib
 flask
 flask-restful
 python-dotenv
+bunch
