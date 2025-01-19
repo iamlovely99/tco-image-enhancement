@@ -9,6 +9,7 @@ import cog
 from run import run_cmd
 from Global.test import runTest
 from Global.detection import runDetection
+from Face_Enhancement.test_face import runTestFace
 
 
 class Predictor(cog.Predictor):
@@ -165,21 +166,23 @@ class Predictor(cog.Predictor):
             os.makedirs(stage_3_output_dir, exist_ok=True)
 
             self.opts.checkpoint_name = "FaceSR_512"
-            stage_3_command = (
-                    "python test_face.py --old_face_folder "
-                    + stage_3_input_face
-                    + " --old_face_label_folder "
-                    + stage_3_input_mask
-                    + " --tensorboard_log --name "
-                    + self.opts.checkpoint_name
-                    + " --gpu_ids "
-                    + gpu1
-                    + " --load_size 512 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 1 --results_dir "
-                    + stage_3_output_dir
-                    + " --no_parsing_map"
-            )
+            # stage_3_command = (
+            #         "python test_face.py --old_face_folder "
+            #         + stage_3_input_face
+            #         + " --old_face_label_folder "
+            #         + stage_3_input_mask
+            #         + " --tensorboard_log --name "
+            #         + self.opts.checkpoint_name
+            #         + " --gpu_ids "
+            #         + gpu1
+            #         + " --load_size 512 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 1 --results_dir "
+            #         + stage_3_output_dir
+            #         + " --no_parsing_map"
+            # )
+            optionsTestFace = {"old_face_folder": stage_3_input_face, "old_face_label_folder": stage_3_input_mask, "tensorboard_log": True, "name": self.opts.checkpoint_name, "gpu_ids": gpu1, "load_size": 512, "label_nc": 18, "no_instance": True, "preprocess_mode": "resize", "batchSize": 1, "results_dir": stage_3_output_dir, "no_parsing_map": True}
+            runTestFace(optionsTestFace)
 
-            run_cmd(stage_3_command)
+            # run_cmd(stage_3_command)
             print("Finish Stage 3 ...")
             print("\n")
 

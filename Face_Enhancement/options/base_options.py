@@ -4,10 +4,10 @@
 import sys
 import argparse
 import os
-from util import util
+from ..util import util
 import torch
-import models
-import data
+from ..models import get_option_setter
+# import data
 import pickle
 
 
@@ -178,22 +178,132 @@ class BaseOptions:
         )
 
         parser.add_argument("--injection_layer", type=str, default="all", help="")
+        parser.add_argument("--isTrain", action="store_true", help="")
 
         self.initialized = True
         return parser
+    
+    def initializeOptions(self):
+        # experiment specifics
+        self.config = {
+            "name": "label2coco",
+                # #help="name of the experiment. It decides where to store samples and models",
 
-    def gather_options(self):
+            "gpu_ids": "0", #help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
+            
+            "checkpoints_dir": "./checkpoints", #help="models are saved here"
+            
+            "model": "pix2pix", #help="which model to use"
+            "norm_G": "spectralinstance",
+                #help="instance normalization or batch normalization",
+            
+            "norm_D": "spectralinstance",
+                #help="instance normalization or batch normalization",
+            
+            "norm_E": "spectralinstance",
+                #help="instance normalization or batch normalization",
+            "phase": "train", #help="train, val, test, etc"
+
+            # input/output sizes
+            "batchSize": 1, #help="input batch size"
+            "preprocess_mode": "scale_width_and_crop",
+                #help="scaling and cropping of images at load time.",
+                # choices=(
+                #     "resize_and_crop",
+                #     "crop",
+                #     "scale_width",
+                #     "scale_width_and_crop",
+                #     "scale_shortside",
+                #     "scale_shortside_and_crop",
+                #     "fixed",
+                #     "none",
+                #     "resize",
+                # )
+            
+            "load_size": 1024,
+                #help="Scale images to this size. The final image will be cropped to --crop_size.",
+            "crop_size": 512,
+                #help="Crop to the width of crop_size (after initially scaling the images to load_size.",
+            "aspect_ratio": 1.0,
+                #help="The ratio width/height. The final height of the load image will be crop_size/aspect_ratio",
+            "label_nc": 182,
+                #help="# of input label classes without unknown class. If you have unknown class as class label, specify --contain_dopntcare_label.",
+            "contain_dontcare_label": False,
+                #help="if the label map contains dontcare label (dontcare=255",
+            "output_nc": 3, #help="# of output image channels"
+
+            # for setting inputs
+            "dataroot": "./datasets/cityscapes/",
+            "dataset_mode": "coco",
+            "serial_batches": False,
+                #help="if true, takes images in order to make batches, otherwise takes them randomly",
+            "no_flip": False,
+                #help="if specified, do not flip the images for data argumentation",
+            "nThreads": 0, #help="# threads for loading data"
+            "max_dataset_size": sys.maxsize,
+                #help="Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.",
+            "load_from_opt_file": False,
+                #help="load the options from checkpoints and use that as default",
+            "cache_filelist_write": False,
+                #help="saves the current filelist into a text file, so that it loads faster",
+            "cache_filelist_read": False, #help="reads from the file list cache"
+            
+
+            # for displays
+            "display_winsize": 400, #help="display window size"
+
+            # for generator
+            "netG": "spade", #help="selects model to use for netG (pix2pixhd | spade"
+            
+            "ngf": 64, #help="# of gen filters in first conv layer"
+            "init_type": "xavier",
+                #help="network initialization [normal|xavier|kaiming|orthogonal]",
+            
+            "init_variance": 0.02, #help="variance of the initialization distribution"
+            
+            "z_dim": 256, #help="dimension of the latent z vector"
+            "no_parsing_map": False, #help="During training, we do not use the parsing map"
+            
+
+            # for instance-wise features
+            "no_instance": False, #help="if specified, do *not* add instance map as input"
+            
+            "nef": 16, #help="# of encoder filters in the first conv layer"
+            
+            "use_vae": False, #help="enable training with an image encoder."
+            "tensorboard_log": False, #help="use tensorboard to record the resutls"
+            
+
+            # parser.add_argument('--img_dir',
+            "old_face_folder": "", #help="The folder name of input old face"
+            
+            "old_face_label_folder": "", #help="The folder name of input old face label"
+            
+
+            "injection_layer": "all", #help=""
+        }
+
+        self.initialized = True
+        return self.config
+    
+    def updateConfig(self, options):
+        for key, value in options.items():
+            self.config[key] = value
+        return  self.config
+
+    def gather_options(self, options):
         # initialize parser with basic options
         if not self.initialized:
             parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
             parser = self.initialize(parser)
 
         # get the basic options
-        opt, unknown = parser.parse_known_args()
+        parser.set_defaults(**options)
+        opt, unknown = parser.parse_known_args(args=[])
 
         # modify model-related parser options
         model_name = opt.model
-        model_option_setter = models.get_option_setter(model_name)
+        model_option_setter = get_option_setter(model_name)
         parser = model_option_setter(parser, self.isTrain)
 
         # modify dataset-related parser options
@@ -208,7 +318,7 @@ class BaseOptions:
         if opt.load_from_opt_file:
             parser = self.update_options_from_file(parser, opt)
 
-        opt = parser.parse_args()
+        opt, unknown = parser.parse_known_args()
         self.parser = parser
         return opt
 
@@ -256,6 +366,42 @@ class BaseOptions:
         file_name = self.option_file_path(opt, makedir=False)
         new_opt = pickle.load(open(file_name + ".pkl", "rb"))
         return new_opt
+    
+    def parseOptions(self, options, save=False):
+
+        opt = self.gather_options(options)
+        opt.isTrain = self.isTrain  # train or test
+        opt.contain_dontcare_label = False
+
+        self.print_options(opt)
+        if opt.isTrain:
+            self.save_options(opt)
+
+        # Set semantic_nc based on the option.
+        # This will be convenient in many places
+        opt.semantic_nc = (
+            opt.label_nc + (1 if opt.contain_dontcare_label else 0) + (0 if opt.no_instance else 1)
+        )
+
+        # set gpu ids
+        str_ids = opt.gpu_ids.split(",")
+        opt.gpu_ids = []
+        for str_id in str_ids:
+            int_id = int(str_id)
+            if int_id >= 0:
+                opt.gpu_ids.append(int_id)
+
+        if len(opt.gpu_ids) > 0:
+            print("The main GPU is ")
+            print(opt.gpu_ids[0])
+            torch.cuda.set_device(opt.gpu_ids[0])
+
+        assert (
+            len(opt.gpu_ids) == 0 or opt.batchSize % len(opt.gpu_ids) == 0
+        ), "Batch size %d is wrong. It must be a multiple of # GPUs %d." % (opt.batchSize, len(opt.gpu_ids))
+
+        self.opt = opt
+        return self.opt
 
     def parse(self, save=False):
 

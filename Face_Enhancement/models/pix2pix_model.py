@@ -2,14 +2,17 @@
 # Licensed under the MIT License.
 
 import torch
-import models.networks as networks
-import util.util as util
+# import models.networks as networks
+# import util.util as util
+# from ..models.networks import modify_commandline_options, GANLoss, VGGLoss, KLDLoss, define_G, define_D, define_E
+from ..models.networks import *
+from ..util.util import save_network, load_network
 
 
 class Pix2PixModel(torch.nn.Module):
     @staticmethod
     def modify_commandline_options(parser, is_train):
-        networks.modify_commandline_options(parser, is_train)
+        modify_commandline_options(parser, is_train)
         return parser
 
     def __init__(self, opt):
@@ -22,12 +25,12 @@ class Pix2PixModel(torch.nn.Module):
 
         # set loss functions
         if opt.isTrain:
-            self.criterionGAN = networks.GANLoss(opt.gan_mode, tensor=self.FloatTensor, opt=self.opt)
+            self.criterionGAN = GANLoss(opt.gan_mode, tensor=self.FloatTensor, opt=self.opt)
             self.criterionFeat = torch.nn.L1Loss()
             if not opt.no_vgg_loss:
-                self.criterionVGG = networks.VGGLoss(self.opt.gpu_ids)
+                self.criterionVGG = VGGLoss(self.opt.gpu_ids)
             if opt.use_vae:
-                self.KLDLoss = networks.KLDLoss()
+                self.KLDLoss = KLDLoss()
 
     # Entry point for all calls involving forward pass
     # of deep networks. We used this approach since DataParallel module
@@ -71,26 +74,26 @@ class Pix2PixModel(torch.nn.Module):
         return optimizer_G, optimizer_D
 
     def save(self, epoch):
-        util.save_network(self.netG, "G", epoch, self.opt)
-        util.save_network(self.netD, "D", epoch, self.opt)
+        save_network(self.netG, "G", epoch, self.opt)
+        save_network(self.netD, "D", epoch, self.opt)
         if self.opt.use_vae:
-            util.save_network(self.netE, "E", epoch, self.opt)
+            save_network(self.netE, "E", epoch, self.opt)
 
     ############################################################################
     # Private helper methods
     ############################################################################
 
     def initialize_networks(self, opt):
-        netG = networks.define_G(opt)
-        netD = networks.define_D(opt) if opt.isTrain else None
-        netE = networks.define_E(opt) if opt.use_vae else None
+        netG = define_G(opt)
+        netD = define_D(opt) if opt.isTrain else None
+        netE = define_E(opt) if opt.use_vae else None
 
         if not opt.isTrain or opt.continue_train:
-            netG = util.load_network(netG, "G", opt.which_epoch, opt)
+            netG = load_network(netG, "G", opt.which_epoch, opt)
             if opt.isTrain:
-                netD = util.load_network(netD, "D", opt.which_epoch, opt)
+                netD = load_network(netD, "D", opt.which_epoch, opt)
             if opt.use_vae:
-                netE = util.load_network(netE, "E", opt.which_epoch, opt)
+                netE = load_network(netE, "E", opt.which_epoch, opt)
 
         return netG, netD, netE
 

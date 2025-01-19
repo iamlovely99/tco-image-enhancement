@@ -9,6 +9,7 @@ from subprocess import call
 
 from Global.test import runTest
 from Global.detection import runDetection
+from Face_Enhancement.test_face import runTestFace
 
 def run_cmd(command):
     try:
@@ -148,36 +149,41 @@ if __name__ == "__main__":
     if not os.path.exists(stage_3_output_dir):
         os.makedirs(stage_3_output_dir)
     
+    optionsTestFace = None
     if opts.HR:
         opts.checkpoint_name='FaceSR_512'
-        stage_3_command = (
-            "python test_face.py --old_face_folder "
-            + stage_3_input_face
-            + " --old_face_label_folder "
-            + stage_3_input_mask
-            + " --tensorboard_log --name "
-            + opts.checkpoint_name
-            + " --gpu_ids "
-            + gpu1
-            + " --load_size 512 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 1 --results_dir "
-            + stage_3_output_dir
-            + " --no_parsing_map"
-        ) 
+        # stage_3_command = (
+        #     "python test_face.py --old_face_folder "
+        #     + stage_3_input_face
+        #     + " --old_face_label_folder "
+        #     + stage_3_input_mask
+        #     + " --tensorboard_log --name "
+        #     + opts.checkpoint_name
+        #     + " --gpu_ids "
+        #     + gpu1
+        #     + " --load_size 512 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 1 --results_dir "
+        #     + stage_3_output_dir
+        #     + " --no_parsing_map"
+        # )
+        optionsTestFace = {"old_face_folder": stage_3_input_face, "old_face_label_folder": stage_3_input_mask, "tensorboard_log": True, "name": opts.checkpoint_name, "gpu_ids": gpu1, "load_size": 512, "label_nc": 18, "no_instance": True, "preprocess_mode": 'resize', "batchSize": 1, "results_dir": stage_3_output_dir, "no_parsing_map": True} 
     else:
-        stage_3_command = (
-            "python test_face.py --old_face_folder "
-            + stage_3_input_face
-            + " --old_face_label_folder "
-            + stage_3_input_mask
-            + " --tensorboard_log --name "
-            + opts.checkpoint_name
-            + " --gpu_ids "
-            + gpu1
-            + " --load_size 256 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 4 --results_dir "
-            + stage_3_output_dir
-            + " --no_parsing_map"
-        )
-    run_cmd(stage_3_command)
+        # stage_3_command = (
+        #     "python test_face.py --old_face_folder "
+        #     + stage_3_input_face
+        #     + " --old_face_label_folder "
+        #     + stage_3_input_mask
+        #     + " --tensorboard_log --name "
+        #     + opts.checkpoint_name
+        #     + " --gpu_ids "
+        #     + gpu1
+        #     + " --load_size 256 --label_nc 18 --no_instance --preprocess_mode resize --batchSize 4 --results_dir "
+        #     + stage_3_output_dir
+        #     + " --no_parsing_map"
+        # )
+        optionsTestFace = {"old_face_folder": stage_3_input_face, "old_face_label_folder": stage_3_input_mask, "tensorboard_log": True, "name": opts.checkpoint_name, "gpu_ids": gpu1, "load_size": 256, "label_nc": 18, "no_instance": True, "preprocess_mode": 'resize', "batchSize": 4, "results_dir": stage_3_output_dir, "no_parsing_map": True}
+    
+    runTestFace(optionsTestFace)
+    # run_cmd(stage_3_command)
     print("Finish Stage 3 ...")
     print("\n")
 
