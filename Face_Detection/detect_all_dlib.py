@@ -127,17 +127,18 @@ def affine2theta(affine, input_w, input_h, target_w, target_h):
     return theta
 
 
-if __name__ == "__main__":
+def runDetectAll(options):
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--url", type=str, default="/home/jingliao/ziyuwan/celebrities", help="input")
-    parser.add_argument(
-        "--save_url", type=str, default="/home/jingliao/ziyuwan/celebrities_detected_face_reid", help="output"
-    )
-    opts = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--url", type=str, default="/home/jingliao/ziyuwan/celebrities", help="input")
+    # parser.add_argument(
+    #     "--save_url", type=str, default="/home/jingliao/ziyuwan/celebrities_detected_face_reid", help="output"
+    # )
+    # opts = parser.parse_args()
+    opts = argparse.Namespace(**options)
 
-    url = opts.url
-    save_url = opts.save_url
+    url = opts.url if opts.url else "/home/jingliao/ziyuwan/celebrities"
+    save_url = opts.save_url if opts.save_url else "/home/jingliao/ziyuwan/celebrities_detected_face_reid"
 
     ### If the origin url is None, then we don't need to reid the origin image
 

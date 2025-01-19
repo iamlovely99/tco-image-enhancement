@@ -10,6 +10,8 @@ from run import run_cmd
 from Global.test import runTest
 from Global.detection import runDetection
 from Face_Enhancement.test_face import runTestFace
+from Face_Detection.align_warp_back_multiple_dlib_HR import runAlignWarpHR
+from Face_Detection.detect_all_dlib_HR import runDetectAllHR
 
 
 class Predictor(cog.Predictor):
@@ -143,14 +145,17 @@ class Predictor(cog.Predictor):
             )
             os.makedirs(stage_2_output_dir, exist_ok=True)
 
-            stage_2_command = (
-                    "python detect_all_dlib_HR.py --url "
-                    + stage_2_input_dir
-                    + " --save_url "
-                    + stage_2_output_dir
-            )
+            # stage_2_command = (
+            #         "python detect_all_dlib_HR.py --url "
+            #         + stage_2_input_dir
+            #         + " --save_url "
+            #         + stage_2_output_dir
+            # )
 
-            run_cmd(stage_2_command)
+            optionsDetectAllHR = {"url": stage_2_input_dir, "save_url": stage_2_output_dir}
+            runDetectAllHR(optionsDetectAllHR)
+
+            # run_cmd(stage_2_command)
             print("Finish Stage 2 ...")
             print("\n")
 
@@ -194,16 +199,19 @@ class Predictor(cog.Predictor):
             stage_4_output_dir = os.path.join(self.opts.output_folder, "final_output")
             os.makedirs(stage_4_output_dir, exist_ok=True)
 
-            stage_4_command = (
-                    "python align_warp_back_multiple_dlib_HR.py --origin_url "
-                    + stage_4_input_image_dir
-                    + " --replace_url "
-                    + stage_4_input_face_dir
-                    + " --save_url "
-                    + stage_4_output_dir
-            )
+            # stage_4_command = (
+            #         "python align_warp_back_multiple_dlib_HR.py --origin_url "
+            #         + stage_4_input_image_dir
+            #         + " --replace_url "
+            #         + stage_4_input_face_dir
+            #         + " --save_url "
+            #         + stage_4_output_dir
+            # )
 
-            run_cmd(stage_4_command)
+            optionsAlignWarpHR = {"origin_url": stage_4_input_image_dir, "replace_url": stage_4_input_face_dir, "save_url": stage_4_output_dir}
+            runAlignWarpHR(optionsAlignWarpHR)
+
+            # run_cmd(stage_4_command)
             print("Finish Stage 4 ...")
             print("\n")
 

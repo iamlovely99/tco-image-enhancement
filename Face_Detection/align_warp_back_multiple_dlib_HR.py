@@ -344,17 +344,18 @@ def search(face_landmarks):
     return results
 
 
-if __name__ == "__main__":
+def runAlignWarpHR(options):
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--origin_url", type=str, default="./", help="origin images")
-    parser.add_argument("--replace_url", type=str, default="./", help="restored faces")
-    parser.add_argument("--save_url", type=str, default="./save")
-    opts = parser.parse_args()
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument("--origin_url", type=str, default="./", help="origin images")
+    # parser.add_argument("--replace_url", type=str, default="./", help="restored faces")
+    # parser.add_argument("--save_url", type=str, default="./save")
+    # opts = parser.parse_args()
+    opts =  argparse.Namespace(**options)
 
-    origin_url = opts.origin_url
-    replace_url = opts.replace_url
-    save_url = opts.save_url
+    origin_url = opts.origin_url if opts.origin_url else "./"
+    replace_url = opts.replace_url if opts.replace_url else "./"
+    save_url = opts.save_url if opts.save_url else "./save"
 
     if not os.path.exists(save_url):
         os.makedirs(save_url)

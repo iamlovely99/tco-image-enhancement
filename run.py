@@ -10,6 +10,10 @@ from subprocess import call
 from Global.test import runTest
 from Global.detection import runDetection
 from Face_Enhancement.test_face import runTestFace
+from Face_Detection.detect_all_dlib import runDetectAll
+from Face_Detection.detect_all_dlib_HR import runDetectAllHR
+from Face_Detection.align_warp_back_multiple_dlib import runAlignWarp
+from Face_Detection.align_warp_back_multiple_dlib_HR import runAlignWarpHR
 
 def run_cmd(command):
     try:
@@ -129,14 +133,18 @@ if __name__ == "__main__":
     if not os.path.exists(stage_2_output_dir):
         os.makedirs(stage_2_output_dir)
     if opts.HR:
-        stage_2_command = (
-            "python detect_all_dlib_HR.py --url " + stage_2_input_dir + " --save_url " + stage_2_output_dir
-        )
+        # stage_2_command = (
+        #     "python detect_all_dlib_HR.py --url " + stage_2_input_dir + " --save_url " + stage_2_output_dir
+        # )
+        optionsDetectAllHR = {"url": stage_2_input_dir, "save_url": stage_2_output_dir}
+        runDetectAllHR(optionsDetectAllHR)
     else:
-        stage_2_command = (
-            "python detect_all_dlib.py --url " + stage_2_input_dir + " --save_url " + stage_2_output_dir
-        )
-    run_cmd(stage_2_command)
+        # stage_2_command = (
+        #     "python detect_all_dlib.py --url " + stage_2_input_dir + " --save_url " + stage_2_output_dir
+        # )
+        optionsDetectAll = {"url": stage_2_input_dir, "save_url": stage_2_output_dir}
+        runDetectAll(optionsDetectAll)
+    # run_cmd(stage_2_command)
     print("Finish Stage 2 ...")
     print("\n")
 
@@ -196,24 +204,28 @@ if __name__ == "__main__":
     if not os.path.exists(stage_4_output_dir):
         os.makedirs(stage_4_output_dir)
     if opts.HR:
-        stage_4_command = (
-            "python align_warp_back_multiple_dlib_HR.py --origin_url "
-            + stage_4_input_image_dir
-            + " --replace_url "
-            + stage_4_input_face_dir
-            + " --save_url "
-            + stage_4_output_dir
-        )
+        # stage_4_command = (
+        #     "python align_warp_back_multiple_dlib_HR.py --origin_url "
+        #     + stage_4_input_image_dir
+        #     + " --replace_url "
+        #     + stage_4_input_face_dir
+        #     + " --save_url "
+        #     + stage_4_output_dir
+        # )
+        optionsAlignWarpHR = {"origin_url": stage_4_input_image_dir, "replace_url": stage_4_input_face_dir, "save_url": stage_4_output_dir}
+        runAlignWarpHR(optionsAlignWarpHR)
     else:
-        stage_4_command = (
-            "python align_warp_back_multiple_dlib.py --origin_url "
-            + stage_4_input_image_dir
-            + " --replace_url "
-            + stage_4_input_face_dir
-            + " --save_url "
-            + stage_4_output_dir
-        )
-    run_cmd(stage_4_command)
+        # stage_4_command = (
+        #     "python align_warp_back_multiple_dlib.py --origin_url "
+        #     + stage_4_input_image_dir
+        #     + " --replace_url "
+        #     + stage_4_input_face_dir
+        #     + " --save_url "
+        #     + stage_4_output_dir
+        # )
+        optionsAlignWarp = {"origin_url": stage_4_input_image_dir, "replace_url": stage_4_input_face_dir, "save_url": stage_4_output_dir}
+        runAlignWarp(optionsAlignWarp)
+    # run_cmd(stage_4_command)
     print("Finish Stage 4 ...")
     print("\n")
 
