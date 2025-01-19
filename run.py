@@ -55,7 +55,6 @@ if __name__ == "__main__":
 
     if not opts.with_scratch:
         options = {"test_mode": "Full", "Quality_restore": True, "test_input": stage_1_input_dir, "outputs_dir": stage_1_output_dir, "gpu_ids": gpu1}
-        print("before command")
         runTest(options)
         # stage_1_command = (
         #     "python test.py --test_mode Full --Quality_restore --test_input "

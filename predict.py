@@ -7,6 +7,8 @@ import glob
 import cv2
 import cog
 from run import run_cmd
+from Global.test import runTest
+from Global.detection import runDetection
 
 
 class Predictor(cog.Predictor):
@@ -68,49 +70,56 @@ class Predictor(cog.Predictor):
 
             if not with_scratch:
 
-                stage_1_command = (
-                        "python test.py --test_mode Full --Quality_restore --test_input "
-                        + stage_1_input_dir
-                        + " --outputs_dir "
-                        + stage_1_output_dir
-                        + " --gpu_ids "
-                        + gpu1
-                )
-                run_cmd(stage_1_command)
+                # stage_1_command = (
+                #         "python test.py --test_mode Full --Quality_restore --test_input "
+                #         + stage_1_input_dir
+                #         + " --outputs_dir "
+                #         + stage_1_output_dir
+                #         + " --gpu_ids "
+                #         + gpu1
+                # )
+                testOptions = {"test_mode": "Full", "Quality_restore": True, "test_input": stage_1_input_dir, "outputs_dir": stage_1_output_dir, "gpu_ids": gpu1}
+                runTest(testOptions)
+                # run_cmd(stage_1_command)
             else:
 
                 mask_dir = os.path.join(stage_1_output_dir, "masks")
                 new_input = os.path.join(mask_dir, "input")
                 new_mask = os.path.join(mask_dir, "mask")
-                stage_1_command_1 = (
-                        "python detection.py --test_path "
-                        + stage_1_input_dir
-                        + " --output_dir "
-                        + mask_dir
-                        + " --input_size full_size"
-                        + " --GPU "
-                        + gpu1
-                )
+                # stage_1_command_1 = (
+                #         "python detection.py --test_path "
+                #         + stage_1_input_dir
+                #         + " --output_dir "
+                #         + mask_dir
+                #         + " --input_size full_size"
+                #         + " --GPU "
+                #         + gpu1
+                # )
+                detectOptions = {"test_path": stage_1_input_dir, "output_dir": mask_dir, "input_size": "full_size", "GPU": gpu1}
 
+                # if HR:
+                #     HR_suffix = " --HR"
+                # else:
+                #     HR_suffix = ""
+
+                # stage_1_command_2 = (
+                #         "python test.py --Scratch_and_Quality_restore --test_input "
+                #         + new_input
+                #         + " --test_mask "
+                #         + new_mask
+                #         + " --outputs_dir "
+                #         + stage_1_output_dir
+                #         + " --gpu_ids "
+                #         + gpu1
+                #         + HR_suffix
+                # )
+                testOptions = {"Scratch_and_Quality_restore": True, "test_input": new_input, "test_mask": new_mask, "outputs_dir": stage_1_output_dir, "gpu_ids": gpu1}
                 if HR:
-                    HR_suffix = " --HR"
-                else:
-                    HR_suffix = ""
-
-                stage_1_command_2 = (
-                        "python test.py --Scratch_and_Quality_restore --test_input "
-                        + new_input
-                        + " --test_mask "
-                        + new_mask
-                        + " --outputs_dir "
-                        + stage_1_output_dir
-                        + " --gpu_ids "
-                        + gpu1
-                        + HR_suffix
-                )
-
-                run_cmd(stage_1_command_1)
-                run_cmd(stage_1_command_2)
+                    testOptions["HR"] = True
+                runDetection(detectOptions)
+                runTest(testOptions)
+                # run_cmd(stage_1_command_1)
+                # run_cmd(stage_1_command_2)
 
             ## Solve the case when there is no face in the old photo
             stage_1_results = os.path.join(stage_1_output_dir, "restored_image")
