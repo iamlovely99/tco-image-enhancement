@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from PIL import Image
 import uuid
 import shutil
-from .service import allowed_file, executeShellCommand
+from .service import allowed_file, executeShellCommand, runModules
 
 load_dotenv()
 
@@ -40,11 +40,11 @@ class ImageEnhancement(Resource):
             with Image.open(input_filepath) as img:
                 width, height = img.size
 
-            stdout = executeShellCommand(["python3", "run.py", "--input_folder", input_folderpath, "--output_folder", output_folderpath, "--GPU", "0"])
-            print(stdout)
+            # stdout = executeShellCommand(["python3", "run.py", "--input_folder", input_folderpath, "--output_folder", output_folderpath, "--GPU", "0"])
+            result = runModules({"input_folder": input_folderpath, "output_folder": output_folderpath, "GPU": "0"})
             output_filepath = os.path.join(output_folderpath, "final_output", filename)
             mimetype = "image/"+file_extension
-            api_response = send_file(output_filepath, mimetype)
+            api_response = send_file(output_filepath, mimetype) if result == True else jsonify({'error': 'Error while processing.'})
             shutil.rmtree(folderpath)
             return api_response
         else:

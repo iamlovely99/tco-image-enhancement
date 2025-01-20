@@ -354,15 +354,15 @@ def runAlignWarp(options):
 
     opts =  argparse.Namespace(**options)
 
-    origin_url = opts.origin_url if opts.origin_url else "./"
-    replace_url = opts.replace_url if opts.replace_url else "./"
-    save_url = opts.save_url if opts.save_url else "./save"
+    origin_url = opts.origin_url if opts.origin_url else "Face_Detection/"
+    replace_url = opts.replace_url if opts.replace_url else "Face_Detection/"
+    save_url = opts.save_url if opts.save_url else "Face_Detection/save"
 
     if not os.path.exists(save_url):
         os.makedirs(save_url)
 
     face_detector = dlib.get_frontal_face_detector()
-    landmark_locator = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    landmark_locator = dlib.shape_predictor("Face_Detection/shape_predictor_68_face_landmarks.dat")
 
     count = 0
 

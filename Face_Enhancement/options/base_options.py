@@ -28,7 +28,7 @@ class BaseOptions:
             "--gpu_ids", type=str, default="0", help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
         )
         parser.add_argument(
-            "--checkpoints_dir", type=str, default="./checkpoints", help="models are saved here"
+            "--checkpoints_dir", type=str, default="Face_Enhancement/checkpoints", help="models are saved here"
         )
         parser.add_argument("--model", type=str, default="pix2pix", help="which model to use")
         parser.add_argument(
@@ -102,7 +102,7 @@ class BaseOptions:
         parser.add_argument("--output_nc", type=int, default=3, help="# of output image channels")
 
         # for setting inputs
-        parser.add_argument("--dataroot", type=str, default="./datasets/cityscapes/")
+        parser.add_argument("--dataroot", type=str, default="Face_Enhancement/datasets/cityscapes/")
         parser.add_argument("--dataset_mode", type=str, default="coco")
         parser.add_argument(
             "--serial_batches",
@@ -191,7 +191,7 @@ class BaseOptions:
 
             "gpu_ids": "0", #help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
             
-            "checkpoints_dir": "./checkpoints", #help="models are saved here"
+            "checkpoints_dir": "Face_Enhancement/checkpoints", #help="models are saved here"
             
             "model": "pix2pix", #help="which model to use"
             "norm_G": "spectralinstance",
@@ -233,7 +233,7 @@ class BaseOptions:
             "output_nc": 3, #help="# of output image channels"
 
             # for setting inputs
-            "dataroot": "./datasets/cityscapes/",
+            "dataroot": "Face_Enhancement/datasets/cityscapes/",
             "dataset_mode": "coco",
             "serial_batches": False,
                 #help="if true, takes images in order to make batches, otherwise takes them randomly",

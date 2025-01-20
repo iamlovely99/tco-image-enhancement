@@ -8,7 +8,7 @@ class TestOptions(BaseOptions):
     def initialize(self):
         BaseOptions.initialize(self)
         self.parser.add_argument("--ntest", type=int, default=float("inf"), help="# of test examples.")
-        self.parser.add_argument("--results_dir", type=str, default="./results/", help="saves results here.")
+        self.parser.add_argument("--results_dir", type=str, default="Global/results/", help="saves results here.")
         self.parser.add_argument(
             "--aspect_ratio", type=float, default=1.0, help="aspect ratio of result images"
         )
@@ -102,7 +102,7 @@ class TestOptions(BaseOptions):
     def initializeOptions(self):
         BaseOptions.initializeOptions(self)
         self.config["ntest"] = float("inf") #help="# of test examples.")
-        self.config["results_dir"] = "./results/" #help="saves results here.")
+        self.config["results_dir"] = "Global/results/" #help="saves results here.")
         self.config["aspect_ratio"] = 1.0 #help="aspect ratio of result images"
         self.config["phase"] = "test" #help="train, val, test, etc")
         self.config["which_epoch"] = "latest"

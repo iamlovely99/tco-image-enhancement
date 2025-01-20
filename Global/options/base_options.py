@@ -25,11 +25,11 @@ class BaseOptions:
             "--gpu_ids", type=str, default="0", help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
         )
         self.parser.add_argument(
-            "--checkpoints_dir", type=str, default="./checkpoints", help="models are saved here"
+            "--checkpoints_dir", type=str, default="Global/checkpoints", help="models are saved here"
         )  ## note: to add this param when using philly
         # self.parser.add_argument('--project_dir', type=str, default='./', help='the project is saved here')  ################### This is necessary for philly
         self.parser.add_argument(
-            "--outputs_dir", type=str, default="./outputs", help="models are saved here"
+            "--outputs_dir", type=str, default="Global/outputs", help="models are saved here"
         )  ## note: to add this param when using philly  Please end with '/'
         self.parser.add_argument("--model", type=str, default="pix2pixHD", help="which model to use")
         self.parser.add_argument(
@@ -54,7 +54,7 @@ class BaseOptions:
         self.parser.add_argument("--output_nc", type=int, default=3, help="# of output image channels")
 
         # for setting inputs
-        self.parser.add_argument("--dataroot", type=str, default="./datasets/cityscapes/")
+        self.parser.add_argument("--dataroot", type=str, default="Global/datasets/cityscapes/")
         self.parser.add_argument(
             "--resize_or_crop",
             type=str,
@@ -347,12 +347,12 @@ class BaseOptions:
                 # #help="gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU"
             
             
-            "checkpoints_dir": "./checkpoints",
+            "checkpoints_dir": "Global/checkpoints",
                 # #help="models are saved here"
             ## note: to add this param when using philly
             # '--project_dir', type=str, default='./', #help='the project is saved here'  ################### This is necessary for philly
             
-            "outputs_dir": "./outputs",
+            "outputs_dir": "Global/outputs",
             # #help="models are saved here"
             ## note: to add this param when using philly  Please end with '/'
             "model": "pix2pixHD",
@@ -386,7 +386,7 @@ class BaseOptions:
             # #help="# of output image channels"
 
             # for setting inputs
-            "dataroot": "./datasets/cityscapes/",
+            "dataroot": "Global/datasets/cityscapes/",
             
             "resize_or_crop": "scale_width",
             # #help="scaling and cropping of images at load time [resize_and_crop|crop|scale_width|scale_width_and_crop]",

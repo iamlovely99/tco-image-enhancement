@@ -146,7 +146,7 @@ def runDetectAll(options):
     os.makedirs(save_url, exist_ok=True)
 
     face_detector = dlib.get_frontal_face_detector()
-    landmark_locator = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    landmark_locator = dlib.shape_predictor("Face_Detection/shape_predictor_68_face_landmarks.dat")
 
     count = 0
 

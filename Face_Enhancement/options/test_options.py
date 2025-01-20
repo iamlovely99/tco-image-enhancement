@@ -7,7 +7,7 @@ from .base_options import BaseOptions
 class TestOptions(BaseOptions):
     def initialize(self, parser):
         BaseOptions.initialize(self, parser)
-        parser.add_argument("--results_dir", type=str, default="./results/", help="saves results here.")
+        parser.add_argument("--results_dir", type=str, default="Face_Enhancement/results/", help="saves results here.")
         parser.add_argument(
             "--which_epoch",
             type=str,

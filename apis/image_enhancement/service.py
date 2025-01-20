@@ -1,6 +1,7 @@
 import os
 import subprocess
 from dotenv import load_dotenv
+from run_all.runModules import runAll
 
 load_dotenv()
 
@@ -11,3 +12,8 @@ def executeShellCommand(cmd):
     # Running a shell command and capturing its output
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout
+
+def runModules(params: dict):
+    # Running a shell command and capturing its output
+    result = runAll(params)
+    return result
